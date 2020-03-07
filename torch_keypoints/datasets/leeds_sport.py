@@ -81,8 +81,13 @@ class LeedsSportExtended(LeedsSportBase):
     FOLDER_NAME = "lsp_dataset_extended"
     DATA_URL = "https://sam.johnson.io/research/lspet_dataset.zip"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.joints = np.moveaxis(self.joints, 1, 2)
+
 
 if __name__ == "__main__":
     ds = LeedsSport(split=Split.TEST)
+    print(ds[0][1].shape)
     ds = LeedsSportExtended()
-    print(ds[0])
+    print(ds[0][1].shape)
