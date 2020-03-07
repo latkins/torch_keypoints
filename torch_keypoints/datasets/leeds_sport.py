@@ -17,7 +17,7 @@ class LeedsSportBase:
     FOLDER_NAME = None
     DATA_URL = None
 
-    def __init__(self, data_dir: Path = Path("/tmp/"), split: Split = Split.TRAIN):
+    def __init__(self, data_dir: Path = Path("/tmp/"), split: Split = Split.TRAIN, transforms=None):
         """
         Loads dataset if it is preseint in `data_dir`.
         Downloads and loads if not.
@@ -39,6 +39,8 @@ class LeedsSportBase:
             sorted((self.root / "images").glob("*.jpg"), key=lambda p: int(p.stem[2:]))
         )
 
+        self.transforms = transforms
+
     def _download(self, data_dir: Path):
         with tempfile.NamedTemporaryFile() as temp:
             download.stream(self.DATA_URL, temp)
@@ -48,7 +50,13 @@ class LeedsSportBase:
     def __getitem__(self, key: int):
         with self.image_paths[key].open("rb") as f:
             img = Image.open(f).convert("RGB")
-        return img, self.joints[key]
+
+        targets = self.joints[key]
+
+        if self.transforms:
+            img, targets = self.transforms(img, targets)
+
+        return img, targets
 
     def __len__(self):
         return self.joints.shape[0]
