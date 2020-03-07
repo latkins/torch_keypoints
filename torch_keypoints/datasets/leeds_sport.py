@@ -56,7 +56,9 @@ class LeedsSportBase:
         if self.transforms:
             img, targets = self.transforms(img, targets)
 
-        return img, targets
+        # This dataset only has a single person per image, but others may have more
+        # Therefore, add dim to targets.
+        return img, targets[None]
 
     def __len__(self):
         return self.joints.shape[0]
