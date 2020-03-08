@@ -54,7 +54,8 @@ class LeedsSportBase:
 
         # This dataset only has a single person per image, but others may have more
         # Therefore, wrap keypoints in list.
-        targets = OrderedDict["keypoints"] = [self.joints[key]]
+        targets = OrderedDict()
+        targets["keypoints"] = [self.joints[key]]
 
         if self.transforms:
             img, targets = self.transforms(img, targets)
