@@ -1,6 +1,7 @@
 import logging
 import tempfile
 import zipfile
+from collections import OrderedDict
 from pathlib import Path
 
 import numpy as np
@@ -51,14 +52,14 @@ class LeedsSportBase:
         with self.image_paths[key].open("rb") as f:
             img = Image.open(f).convert("RGB")
 
-        targets = self.joints[key]
+        # This dataset only has a single person per image, but others may have more
+        # Therefore, wrap keypoints in list.
+        targets = OrderedDict["keypoints"] = [self.joints[key]]
 
         if self.transforms:
             img, targets = self.transforms(img, targets)
 
-        # This dataset only has a single person per image, but others may have more
-        # Therefore, add dim to targets.
-        return img, targets[None]
+        return img, targets
 
     def __len__(self):
         return self.joints.shape[0]
